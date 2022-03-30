@@ -35,11 +35,11 @@ DESCRIPTION
 
 Convenience routines to "divvy" up a positional object based on the elements values.
 
-When presenting a portion of an array or list, it is simple in Raku to return a specific number of elements `@array[^5]` or some such. Often you need to find the elements whose **value** is in some range. "Show the elements less than 100" or "find the elements between 25 and 50". There are no built in routines in Raku for that. It is possible but often a little convoluted.
+When presenting a portion of an array or list, it is simple in Raku to return a specific number of elements `@array[^5]` or some such. Often you need to find the elements whose **value** is in some range. "Show the elements less than 100" or "find the elements between 25 and 50". There are no built-in routines in Raku for that. It is possible to do but often a little convoluted.
 
-This module exposes several routines to easily partition positionals.
+This module exposes several routines to easily partition positionals. These routines are perfectly capable of working with infinite lists and will **not** attepmt to reify the whole list to return the requested values.
 
-Note that there is at least one other module available ([List::MoreUtils](https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat)) that provides similar partition functionality. [List::MoreUtils](https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat) is a Perl 5 port though, and the routines from there are formated `routine($threshold, @list)` rather than `routine(@list, $threshold)`, which makes it much more difficult to do routine chaining. In this module, the list out from any routine is suitable as the first input parameter to any other routine.
+Note that there is at least one other module available ([List::MoreUtils](https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat)) that provides similar partition functionality. [List::MoreUtils](https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat) is a Perl 5 port though, and the routines from there are formatted `routine($threshold, @list)` rather than `routine(@list, $threshold)`, which makes it much more difficult to do routine chaining. In this module, the list out from any routine is suitable as the first input parameter to any other routine.
 
 These routines primarily are geared to monotonically increasing numeric values. They can be used with decreasing or variable lists but may not return the results expected.
 
@@ -80,7 +80,7 @@ Pass in a defined Real value to get all of the elements up to but not including 
 
     1 2 3 4 5 6 7 8 9
 
-`(1..100).&before(* %% 7)` returns:
+Or a Whatevercode `(1..100).&before(* %% 7)` returns:
 
     1 2 3 4 5 6
 
@@ -103,7 +103,7 @@ Pass in a defined Real value to get all of the elements after but not including 
 
     6 7 8 9 10
 
-`(1..10).&after(* %% 7)` returns:
+Or a Whatevercode `(1..10).&after(* %% 7)` returns:
 
     8 9 10
 
@@ -128,7 +128,7 @@ Pass in a defined Real value to get all of the elements up to and including that
 
     1 2 3 4 5 6 7 8 9 10
 
-`(1..100).&upto(* %% 7)` returns:
+Or a Whatevercode `(1..100).&upto(* %% 7)` returns:
 
     1 2 3 4 5 6 7
 
@@ -151,7 +151,7 @@ Pass in a defined Real value to get all of the elements greater than or equal to
 
     5 6 7 8 9 10
 
-`(1..10).from(* %% 7)` returns:
+Or a Whatevercode `(1..10).from(* %% 7)` returns:
 
     7 8 9 10
 
@@ -199,13 +199,18 @@ Get all of the elements bounded by, and including the threshold values.
 
     23 24 25 26 27 28 29
 
-You may also combine the single ended partitions in various combinations to include or exclude the upper and lower threholds as desired.
+You may also combine and chain the single ended partitions in various combinations to include or exclude the upper and lower thresholds as desired.
 
 `(1..20).&after(4).&upto(12)` to get:
 
     5 6 7 8 9 10 11 12
 
 Note that these examples have all used integers, but they may be **any** Real numeric value. If the threshold value does not appear in the list then the corresponding routines act the same.
+
+Cuban numbers between 1e5 and 1.2e5.
+
+    put (1..*).map({ ($_+1)³ - .³ }).grep( &is-prime ).&between(1e5, 1.2e5);
+    # 103231 104347 110017 112327 114661 115837
 
 BUGS
 ====
