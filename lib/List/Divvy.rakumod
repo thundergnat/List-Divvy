@@ -89,12 +89,23 @@ for that. It is possible but often a little convoluted.
 
 This module exposes several routines to easily partition positionals.
 
-The routines primarily are geared to monotonically increasing  numeric values.
-They can be used with decreasing or variable lists but may not return the results
-expected.
+Note that there is at least one other module available
+(L<List::MoreUtils|https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat>)
+that provides similar partition functionality.
+L<List::MoreUtils|https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat>
+is a Perl 5 port though, and the routines from there are formated
+C<routine($threshold, @list)> rather than C<routine(@list, $threshold)>, which
+makes it much more difficult to do routine chaining. In this module, the list
+out from any routine is suitable as the first input parameter to any other
+routine.
 
-They will all accept both Real defined numeric values, or, Callable blocks or
-Whatever codes.
+
+These routines primarily are geared to monotonically increasing numeric values.
+They can be used with decreasing or variable lists but may not return the
+results expected.
+
+They will all accept both Real defined numeric values for thresholds, or,
+Callable blocks or Whatever codes.
 
 Exports the Subs:
 
