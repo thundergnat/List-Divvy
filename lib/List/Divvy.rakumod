@@ -89,11 +89,11 @@ for that. It is possible to do but often a little convoluted.
 
 This module exposes several routines to easily partition positionals. These
 routines are perfectly capable of working with infinite lists and will B<not>
-attepmt to reify the whole list to return the requested values.
+attempt to reify the whole list to return the requested values.
 
-Note that there is at least one other module available
+B<Note:> there is at least one other Raku module available
 (L<List::MoreUtils|https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat>)
-that provides similar partition functionality.
+that provides similar list partition functionality.
 L<List::MoreUtils|https://modules.raku.org/dist/List::MoreUtils:zef:zef:lizmat>
 is a Perl 5 port though, and the routines from there are formatted
 C<routine($threshold, @list)> rather than C<routine(@list, $threshold)>, which
@@ -281,7 +281,7 @@ numeric value. If the threshold value does not appear in the list then the
 corresponding routines act the same.
 
 
-Cuban numbers between 1e5 and 1.2e5.
+Cuban primes between 1e5 and 1.2e5.
 
     put (1..*).map({ ($_+1)³ - .³ }).grep( &is-prime ).&between(1e5, 1.2e5);
     # 103231 104347 110017 112327 114661 115837
