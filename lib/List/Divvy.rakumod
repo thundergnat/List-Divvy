@@ -1,4 +1,4 @@
-unit module Divvy:ver<0.0.2>:auth<github:thundergnat>;
+unit module Divvy:ver<0.0.1>:auth<github:thundergnat>;
 
 multi before (@array, Real $before) is export {
     @array[^(@array.first: :k, * >= $before)]
@@ -264,7 +264,7 @@ Returns the list of values C<bounded()> by the two threshold values.
 
 Get all of the elements bounded by, and including the threshold values.
 
-C<(1..100).&between(23, 29)> to get:
+C<(1..100).&bounded(23, 29)> to get:
 
     23 24 25 26 27 28 29
 

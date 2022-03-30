@@ -195,7 +195,7 @@ Returns the list of values `bounded()` by the two threshold values.
 
 Get all of the elements bounded by, and including the threshold values.
 
-`(1..100).&between(23, 29)` to get:
+`(1..100).&bounded(23, 29)` to get:
 
     23 24 25 26 27 28 29
 
