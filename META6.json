@@ -1,16 +1,34 @@
 {
-    "perl"        : "6.*",
-    "name"        : "List::Divvy",
-    "version"     : "0.0.1",
-    "description" : "Positional object partion by element value",
-    "auth"        : "git:thundergnat",
-    "authors"     : [ "Stephen Schulze (thundergnat)" ],
-    "provides"    : {
-        "List::Divvy" : "lib/List/Divvy.rakumod"
-    },
-    "depends"     : [],
-    "source-type" : "git",
-    "source-url"  : "https://github.com/thundergnat/Lingua-EN-Numbers.git",
-    "license"     : "Artistic-2.0",
-    "tags"        : [ "List", "Partition", "before", "after", "upto", "from", "between", "bounded" ]
+  "auth": "zef:thundergnat",
+  "authors": [
+    "Stephen Schulze (thundergnat)"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "Positional object partion by element value",
+  "license": "Artistic-2.0",
+  "name": "List::Divvy",
+  "perl": "6.*",
+  "provides": {
+    "List::Divvy": "lib/List/Divvy.rakumod"
+  },
+  "resources": [
+  ],
+  "source-type": "git",
+  "source-url": "https://github.com/thundergnat/Lingua-EN-Numbers.git",
+  "tags": [
+    "List",
+    "Partition",
+    "before",
+    "after",
+    "upto",
+    "from",
+    "between",
+    "bounded"
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
 }
