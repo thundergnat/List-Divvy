@@ -7,7 +7,7 @@
   ],
   "depends": [
   ],
-  "description": "Positional object partion by element value",
+  "description": "Positional object partition by element value",
   "license": "Artistic-2.0",
   "name": "List::Divvy",
   "perl": "6.*",
@@ -30,5 +30,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
