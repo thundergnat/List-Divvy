@@ -226,7 +226,7 @@ Returns the list of values C<between()> the two boundary values.
 =item2 value; upper threshold, any Real number (Rat, Int, or Num) or Callable
 
 
-Gets all of the elements beween but not including the threshold values.
+Gets all of the elements between but not including the threshold values.
 
 C<(1..100).&between(23, 29)> to get:
 
@@ -252,16 +252,16 @@ C<(1..100).&between(23, 29)> to get:
     23 24 25 26 27 28 29
 
 
-You may also combine the single ended partions in various combinations to include
+You may also combine the single ended partitions in various combinations to include
 or exclude the upper and lower threholds as desired.
 
 C<(1..20).&after(4).&upto(12)> to get:
 
     5 6 7 8 9 10 11 12
 
-Note that these examples hav all used integers, but they may be B<any> Real
+Note that these examples have all used integers, but they may be B<any> Real
 numeric value. If the threshold value does not appear in the list then the
-cooresponding routines act the same.
+corresponding routines act the same.
 
 
 

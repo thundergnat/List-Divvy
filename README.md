@@ -1,373 +1,219 @@
-NAME Lingua::EN::Numbers
-========================
+NAME List::Divvy
+================
 
-[![test](https://github.com/thundergnat/Lingua-EN-Numbers/actions/workflows/test.yml/badge.svg)](https://github.com/thundergnat/Lingua-EN-Numbers/actions/workflows/test.yml)
+[![test](https://github.com/thundergnat/List-Divvy/actions/workflows/test.yml/badge.svg)](https://github.com/thundergnat/List-Divvy/actions/workflows/test.yml)
 
-Various number-string conversion utility routines.
-
-Convert numbers to their cardinal or ordinal representation.
-
-Several other numeric string "prettifying" routines.
+Various shortcut keyword routines to divide up monotonic Positional objects based on values.
 
 SYNOPSIS
 ========
 
-    use Lingua::EN::Numbers;
+    use List::Divvy;
 
-    # Integers
-    say cardinal(42);             # forty-two
-    say cardinal('144');          # one hundred forty-four
-    say cardinal(76541);          # seventy-six thousand, five hundred forty-one
+    my $list = 1..∞ # an infinite range
 
-    # Rationals
-    say cardinal(7/2);            # three and one half
-    say cardinal(7/2, :improper); # seven halves
-    say cardinal(7/2, :im );      # seven halves
-    say cardinal(15/4)            # three and three quarters
-    say cardinal(3.75)            # three and three quarters
-    say cardinal(15/4, :improper) # fifteen quarters
-    say cardinal('3/16');         # three sixteenths
+    # show the values in the list before a value greater than or equal to 5
+    put list.&before(5); # 1 2 3 4
 
-    # Years
-    say cardinal-year(1800)       # eighteen hundred
-    say cardinal-year(1905)       # nineteen oh-five
-    say cardinal-year(2000)       # two thousand
-    say cardinal-year(2015)       # twenty fifteen
+    # show the values in the list up to and including a value equal to 5
+    put list.&upto(5); # 1 2 3 4 5
 
-    # cardinal vs. cardinal-year
-    say cardinal(1776);           # one thousand, seven hundred seventy-six
-    say cardinal-year(1776)       # seventeen seventy-six
+    # show the first 5 values in the list greater than 5
+    put $list.&after(5).head(5); # 6 7 8 9 10
 
+    # show the first 5 values in the list greater than or equal to 5
+    put $list.&from(5).head(5); # 5 6 7 8 9
 
-    # Sometimes larger denominators make it difficult to discern where the
-    # numerator ends and the denominator begins. Change the separator to
-    # make it easier to tell.
+    # show the values between 10 and 15
+    put $list.&between(10, 15); # 11 12 13 14
 
-    say cardinal(97873/10000000);
-    # ninety seven thousand, eight hundred seventy-three ten millionths
-
-    say cardinal(97873/10000000, :separator(' / '));
-    # ninety seven thousand, eight hundred seventy-three / ten millionths
-
-
-    # If you want to use a certain denominator in the display and not reduce
-    # fractions, specify a common denominator.
-
-    say cardinal(15/1000);                      # three two hundredths
-    say cardinal(15/1000, :denominator(1000));  # fifteen thousandths
-    # or
-    say cardinal(15/1000, denominator => 1000); # fifteen thousandths
-    # or
-    say cardinal(15/1000, :den(1000) );         # fifteen thousandths
-
-    # Ordinals
-    say ordinal(1);               # first
-    say ordinal(2);               # second
-    say ordinal(123);             # one hundred twenty-third
-
-    # Ordinal digit
-    say ordinal-digit(22);        # 22nd
-    say ordinal-digit(1776);      # 1776th
-    say ordinal-digit(331 :u);    # 331ˢᵗ
-    say ordinal-digit(12343 :c);  # 12,343rd
-
-    # Use pretty-rat() to print rational strings as fractions rather than
-    # as decimal numbers. Whole number fractions will be reduced to Ints.
-    say pretty-rat(1.375); # 11/8
-    say pretty-rat(8/2);   # 4
-
-    # no-commas flag
-
-    # save state
-    my $state = no-commas?;
-
-    # disable commas
-    no-commas;
-
-    say cardinal(97873/10000000);
-    # ninety seven thousand eight hundred seventy-three ten millionths
-
-    # restore state
-    no-commas($state);
-
-
-    # Commas routine
-    say comma( 5.0e9.Int );       # 5,000,000,000
-    say comma( -123456 );         # -123,456
-    say comma(  7832.00 );        # 7,832
-    say comma( '7832.00' );       # 7,832.00
-
-    # Super routine
-    say super('32');              # ³²
-    say super -47;                # ⁻⁴⁷
-
-Or, import the short form routine names:
-
-    use Lingua::EN::Numbers :short;
-
-    say card(42);    # forty-two
-    say card-y(2020) # twenty twenty
-    say ord-n(42);   # forty-second
-    say ord-d(42);   # 42nd
-    say card(.875)   # seven eights
-    say prat(.875);  # 7/8
+    # show the values bounded by 10 and 15
+    put $list.&bounded(10, 15); # 10 11 12 13 14 15
 
 DESCRIPTION
 ===========
 
+Convenience routines to "divvy" up a positional object based on the elements values.
+
+When presenting a portion of an array or list, it is simple in Raku to return a specific number of elements `@array[^5]` or some such. Often you need to find the elements whose **value** is in some range. "Show the elements less than 100" or "find the elements between 25 and 50". There are no built in routines in Raku for that. It is possible but often a little convoluted.
+
+This module exposes several routines to easily partition positionals.
+
+The routines primarily are geared to monotonically increasing numeric values. They can be used with decreasing or variable lists but may not return the results expected.
+
+They will all accept both Real defined numeric values, or, Callable blocks or Whatever codes.
+
 Exports the Subs:
 
-  * [cardinal( )](#cardinal) - short: card()
+  * [before( )](#before)
 
-  * [cardinal-year( )](#cardinal-year) - short: card-y()
+  * [after( )](#after)
 
-  * [ordinal( )](#ordinal) - short: ord-n()
+  * [upto( )](#upto)
 
-  * [ordinal-digit( )](#ordinal-digit) - short: ord-d()
+  * [from( )](#from)
 
-  * [comma( )](#comma)
+  * [between( )](#between)
 
-  * [pretty-rat( )](#pretty-rat) - short: prat()
+  * [bounded( )](#bounded)
 
-  * [super( )](#super)
+Use `before()` and `after()` to partition out value less than or greater than some threshold **not** including the threshold value.
 
-and Flag:
+<a name="before"></a>before( )
+------------------------------
 
-  * [no-commas](#no-commas)
+Returns the list of values `before()` the given defined value or Whatevercode.
 
-Short form routine names are only available if you specifically import them:
+### before( Real $value ); or before( Callable $block );
 
-`use Lingua::EN::Numbers :short;`
+  * $value
 
-<a name="cardinal"></a>cardinal( ) - short: card()
---------------------------------------------------
+    * value; any Real number (Rat, Int, or Num)
 
-Returns cardinal representations of integers following the American English, short scale convention.
+  * $block
 
-See: https://en.wikipedia.org/wiki/Long_and_short_scales
+    * callable; an expression, block or Whatevercode that returns a Boolean
 
-### cardinal( $number, :separator($str), :denominator($val), :improper );
+Pass in a defined Real value to get all of the elements up to but not including that value. `(1..100).&before(10)` to get:
 
-  * $number
+    1 2 3 4 5 6 7 8 9
 
-    * value; required, any Real number (Rat, Int, or Num)
+`(1..100).&before(* %% 7)` returns:
 
-  * :separator or :sep
+    1 2 3 4 5 6
 
-    * value; optional, separator between numerator and denominator, defaults to space. Ignored if a non Rat is passed in.
-
-  * :denominator or :den
-
-    * value; optional, integer denominator to use for representation, do not reduce to lowest terms. Ignored if a non Rat is passed in.
-
-  * :improper or :im
-
-    * flag; optional, do not regularize improper fractions. Ignored if a non Rat is passed in.
-
-Pass `cardinal()` a number or something that can be converted to one; returns its cardinal representation.
-
-Recognizes integer numbers from: -9999999999999999999999999999999999999999999999999999999999999999999999999999 99999999999999999999999999999999999999999999999999999999999999999999999999999 99999999999999999999999999999999999999999999999999999999999999999999999999999 9999999999999999999999999999999999999999999999999999999999999999999999999999 to 99999999999999999999999999999999999999999999999999999999999999999999999999999 99999999999999999999999999999999999999999999999999999999999999999999999999999 99999999999999999999999999999999999999999999999999999999999999999999999999999 999999999999999999999999999999999999999999999999999999999999999999999999999
-
-Thats 306 9s, negative, through positive:
-
-nine hundred ninety-nine centillion, nine hundred ninety-nine novemnonagintillion, nine hundred ninety-nine octononagintillion, nine hundred ninety-nine septennonagintillion, nine hundred ninety-nine sexnonagintillion, nine hundred ninety-nine quinnonagintillion, nine hundred ninety-nine quattuornonagintillion, nine hundred ninety-nine trenonagintillion, nine hundred ninety-nine duononagintillion, nine hundred ninety-nine unnonagintillion, nine hundred ninety-nine nonagintillion, nine hundred ninety-nine novemoctogintillion, nine hundred ninety-nine octooctogintillion, nine hundred ninety-nine septenoctogintillion, nine hundred ninety-nine sexoctogintillion, nine hundred ninety-nine quinoctogintillion, nine hundred ninety-nine quattuoroctogintillion, nine hundred ninety-nine treoctogintillion, nine hundred ninety-nine duooctogintillion, nine hundred ninety-nine unoctogintillion, nine hundred ninety-nine octogintillion, nine hundred ninety-nine novemseptuagintillion, nine hundred ninety-nine octoseptuagintillion, nine hundred ninety-nine septenseptuagintillion, nine hundred ninety-nine sexseptuagintillion, nine hundred ninety-nine quinseptuagintillion, nine hundred ninety-nine quattuorseptuagintillion, nine hundred ninety-nine treseptuagintillion, nine hundred ninety-nine duoseptuagintillion, nine hundred ninety-nine unseptuagintillion, nine hundred ninety-nine septuagintillion, nine hundred ninety-nine novemsexagintillion, nine hundred ninety-nine octosexagintillion, nine hundred ninety-nine septensexagintillion, nine hundred ninety-nine sexsexagintillion, nine hundred ninety-nine quinsexagintillion, nine hundred ninety-nine quattuorsexagintillion, nine hundred ninety-nine tresexagintillion, nine hundred ninety-nine duosexagintillion, nine hundred ninety-nine unsexagintillion, nine hundred ninety-nine sexagintillion, nine hundred ninety-nine novemquinquagintillion, nine hundred ninety-nine octoquinquagintillion, nine hundred ninety-nine septenquinquagintillion, nine hundred ninety-nine sexquinquagintillion, nine hundred ninety-nine quinquinquagintillion, nine hundred ninety-nine quattuorquinquagintillion, nine hundred ninety-nine trequinquagintillion, nine hundred ninety-nine duoquinquagintillion, nine hundred ninety-nine unquinquagintillion, nine hundred ninety-nine quinquagintillion, nine hundred ninety-nine novemquadragintillion, nine hundred ninety-nine octoquadragintillion, nine hundred ninety-nine septenquadragintillion, nine hundred ninety-nine sexquadragintillion, nine hundred ninety-nine quinquadragintillion, nine hundred ninety-nine quattuorquadragintillion, nine hundred ninety-nine trequadragintillion, nine hundred ninety-nine duoquadragintillion, nine hundred ninety-nine unquadragintillion, nine hundred ninety-nine quadragintillion, nine hundred ninety-nine novemtrigintillion, nine hundred ninety-nine octotrigintillion, nine hundred ninety-nine septentrigintillion, nine hundred ninety-nine sextrigintillion, nine hundred ninety-nine quintrigintillion, nine hundred ninety-nine quattuortrigintillion, nine hundred ninety-nine tretrigintillion, nine hundred ninety-nine duotrigintillion, nine hundred ninety-nine untrigintillion, nine hundred ninety-nine trigintillion, nine hundred ninety-nine novemvigintillion, nine hundred ninety-nine octovigintillion, nine hundred ninety-nine septenvigintillion, nine hundred ninety-nine sexvigintillion, nine hundred ninety-nine quinvigintillion, nine hundred ninety-nine quattuorvigintillion, nine hundred ninety-nine trevigintillion, nine hundred ninety-nine duovigintillion, nine hundred ninety-nine unvigintillion, nine hundred ninety-nine vigintillion, nine hundred ninety-nine novemdecillion, nine hundred ninety-nine octodecillion, nine hundred ninety-nine septendecillion, nine hundred ninety-nine sexdecillion, nine hundred ninety-nine quindecillion, nine hundred ninety-nine quattuordecillion, nine hundred ninety-nine tredecillion, nine hundred ninety-nine duodecillion, nine hundred ninety-nine undecillion, nine hundred ninety-nine decillion, nine hundred ninety-nine nonillion, nine hundred ninety-nine octillion, nine hundred ninety-nine septillion, nine hundred ninety-nine sextillion, nine hundred ninety-nine quintillion, nine hundred ninety-nine quadrillion, nine hundred ninety-nine trillion, nine hundred ninety-nine billion, nine hundred ninety-nine million, nine hundred ninety-nine thousand, nine hundred ninety-nine
-
-Handles Rats limited to the integer limits for the numerator and denominator.
-
-When converting rational numbers, the word "and" is inserted between any whole number portion and the fractional portions of the number. If you have an "and" in the output, the input number had a fractional portion.
-
-By default, `cardinal()` reduces fractions to their lowest terms. If you want to specify the denominator used to display, pass in an integer to the :denominator option.
-
-It is probably best to specify a denominator that is a common divisor for the denominator. `cardinal()` will work with any integer denominator, and will scale the numerator to match, but will round off the numerator to the nearest integer after scaling, so some error will creep in if denominator is NOT a common divisor with the denominator.
-
-Recognizes Nums up to about 1.79e308. (2¹⁰²⁴ - 1)
-
-When converting Nums, reads out the enumerated digits for the mantissa and returns the ordinal exponent.
-
-E.G. `cardinal(2.712e7)` will return:
-
-    two point seven one two times ten to the seventh
-
-If you want it to be treated like an integer or rational, coerce it to the appropriate type.
-
-`cardinal(2.712e7.Int)` to get:
-
-    twenty-seven million, one hundred twenty thousand
-
-`cardinal(1.25e-3)` returns:
-
-    one point two five times ten to the negative third
-
-`cardinal(1.25e-3.Rat)` returns:
-
-    one eight hundredth
-
-<a name="cardinal-year"></a>cardinal-year( ) - short: card-y()
---------------------------------------------------------------
-
-Converts integers from 1 to 9999 to the common American English convention.
-
-### cardinal-year( $year, :oh($str) );
-
-  * $year
-
-    * value; must be an integer between 1 and 9999 or something that can be coerced to an integer between 1 and 9999.
-
-  * :oh
-
-    * value; optional, string to use for the "0" years after a millennium. Default 'oh-'. Change to ' ought-' or some other string if desired.
-
-Follows the common American English convention for years:
-
-    2015 -> twenty fifteen.
-
-    1984 -> nineteen eighty-four.
-
-Even millenniums are returned as thousands:
-
-    2000 -> two thousand.
-
-Even centuries are returned as hundreds:
-
-    1900 -> nineteen hundred.
-
-Years 1 .. 9 in each century are returned as ohs:
-
-    2001 -> twenty oh-one.
-
-Configurable with the :oh parameter. Default is 'oh-'. Change to 'ought-' if you prefer twenty ought-one, or something else if that is your preference.
-
-<a name="ordinal"></a>ordinal( ) - short: ord-n()
--------------------------------------------------
-
-Takes an integer or something that can be coerced to an integer and returns a string similar to the cardinal() routine except it is positional rather than valuation.
-
-E.G. 'first' rather than 'one', 'eleventh' rather than 'eleven'.
-
-### ordinal( $integer )
-
-  * $integer
-
-    * value; an integer or something that can be coerced to a sensible integer value.
-
-<a name="ordinal-digit"></a>ordinal-digit( ) - short: ord-d()
--------------------------------------------------------------
-
-Takes an integer or something that can be coerced to an integer and returns the given numeric value with the appropriate suffix appended to the number. 1 -> 1st, 3 -> 3rd, 24 -> 24th etc.
-
-### ordinal-digit( $integer, :u, :c )
-
-  * $integer
-
-    * value; an integer or something that can be coerced to a sensible integer value.
-
-  * :u
-
-    * boolean; enable Unicode superscript ordinal suffixes (ˢᵗ, ⁿᵈ, ʳᵈ, ᵗʰ). Default false.
-
-  * :c
-
-    * boolean; add commas to the ordinal number. Default false.
-
-<a name="comma"></a>comma( )
+<a name="after"></a>after( )
 ----------------------------
 
-Insert commas into a numeric string following the English convention. Groups of 3-orders-of-magnitude for whole numbers, fractional portions are unaffected.
+Complement to `before()`, `after()` returns the elements greater than the passed in value or code block.
 
-### comma( $number )
+### after( Real $value ); or after( Callable $block );
 
-  * $number
+  * $value
 
-    * value; an integer, rational, int-string, rat-string or numeric string.
+    * value; any Real number (Rat, Int, or Num)
 
-Will accept an Integer, Int-String, Rational, Rat-String or a numeric string that looks like an Integer or Rational. Any non-significant leading zeros are dropped. Non-significant trailing zeros are dropped for numeric rationals. If you want to retain non-significant trailing zeros in Rats, pass the argument as a string.
+  * $block
 
-<a name="pretty-rat"></a> pretty-rat() - short: prat()
-------------------------------------------------------
+    * callable; an expression, block or Whatevercode that returns a Boolean
 
-A "prettifying" routine to render rational numbers as a fraction. Rats that have a denominator of 1 will be rendered as integers.
+Pass in a defined Real value to get all of the elements after but not including that value. `(1..10).&after(5)` to get:
 
-### pretty-rat($number)
+    6 7 8 9 10
 
-  * $number
+`(1..10).&after(* %% 7)` returns:
 
-    * value; Any real number. Integers and Nums will be passed along unchanged; Rats will be converted to a fractional representation.
+    8 9 10
 
-<a name="no-commas"></a>no-commas
----------------------------------
+Use `upto()` and `from()` to partition out value less than or greater than some threshold including the threshold value.
 
-A global flag for the `cardinal()` and `ordinal()` routines that disables / enables returning commas between 3-order-of-magnitude groups.
+<a name="upto"></a>upto( )
+--------------------------
 
-<a name="pretty-rat"></a> pretty-rat() - short: prat()
-------------------------------------------------------
+Returns the list of values `upto()` the given defined value or Whatevercode.
 
-A "prettifying" routine to render rational numbers as a fraction. Rats that have a denominator of 1 will be rendered as integers.
+### upto( Real $value ); or upto( Callable $block );
 
-<a name="super"></a> super()
-----------------------------
+  * $value
 
-A "prettifying" routine to render numbers as Unicode superscripts. Mostly for formatting output strings. Not convieniently usable for a variable exponent.
+    * value; any Real number (Rat, Int, or Num)
 
-### super($number)
+  * $block
 
-  * $number
+    * callable; an expression, block or Whatevercode that returns a Boolean
 
-    * value; Any real integer or integer string.
+Pass in a defined Real value to get all of the elements up to and including that value. `(1..100).&upto(10)` to get:
 
-Note that a numeric of -0 will be superscripted to ⁰ since Raku treats numeric -0 and 0 as equivalent. If it is important to have the negative sign show up, pass the value as a string "-0". Provides superscript versions of: +-0123456789()ei . Technically, super will work with any numeric, but Unicode does not offer a superscript decimal point, so it is of limited use for rationals and scientific notation.
+    1 2 3 4 5 6 7 8 9 10
 
-<a name="no-commas"></a>no-commas
----------------------------------
+`(1..100).&upto(* %% 7)` returns:
 
-A global flag for the `cardinal()` and `ordinal()` routines that disables / enables returning commas between 3-order-of-magnitude groups.
+    1 2 3 4 5 6 7
 
-### no-commas( $bool )
+<a name="from"></a>from( )
+--------------------------
 
-  * $bool
+Complement to `upto()`, `from()` returns the elements greater than or equal to the passed in value or code block.
 
-    * A truthy / falsey value to enable / disable inserting commas into spelled out numeric strings.
+### from( Real $value ); or from( Callable $block );
 
-Takes a Boolean or any value that can be coerced to a Boolean as a flag to disable / enable inserting commas. Absence of a value is treated as True. E.G.
+  * $value
 
-    no-commas;
+    * value; any Real number (Rat, Int, or Num)
 
-is the same as
+  * $block
 
-    no-commas(True);
+    * callable; an expression, block or Whatevercode that returns a Boolean
 
-to re-enable inserting commas:
+Pass in a defined Real value to get all of the elements greater than or equal to that value. `(1..10).&from(5)` to get:
 
-    no-commas(False);
+    5 6 7 8 9 10
 
-Disabled (False) by default. May be enabled and disabled as desired, even within a single block; the flag is global though, not lexical. If you disable commas deep within a block, it will affect all `ordinal()` and `cardinal()` calls afterwords, even in a different scope. If your script is part of a larger application, you may want to query the `no-commas` state and restore it after any modification.
+`(1..10).from(* %% 7)` returns:
 
-Query the no-commas flag state with:
+    7 8 9 10
 
-    my $state = no-commas?;
+Similar to the single ended partition routines, there are routines `between` and `bounded`.
 
-Returns the current flag state as a Boolean: True - commas disabled, False - commas enabled. Does not modify the current state.
+<a name="between"></a>between( )
+--------------------------------
 
-Restore it with:
+Returns the list of values `between()` the two boundary values.
 
-    no-commas($state);
+### between( Real (or Callable) $lo, Real (or Callable) $hi );
 
-NOTE: the `comma()` routine and `no-commas` flag have nothing to do with each other, do not interact, and serve completely different purposes.
+  * $lo
 
-----
+    * value; lower threshold, any Real number (Rat, Int, or Num) or Callable
+
+  * $hi
+
+    * value; upper threshold, any Real number (Rat, Int, or Num) or Callable
+
+Gets all of the elements between but not including the threshold values.
+
+`(1..100).&between(23, 29)` to get:
+
+    24 25 26 27 28
+
+<a name="bounded"></a>bounded( )
+--------------------------------
+
+Returns the list of values `bounded()` by the two threshold values.
+
+### bounded( Real (or Callable) $lo, Real (or Callable) $hi );
+
+  * $lo
+
+    * value; lower threshold, any Real number (Rat, Int, or Num) or Callable
+
+  * $hi
+
+    * value; upper threshold, any Real number (Rat, Int, or Num) or Callable
+
+Get all of the elements bounded by, and including the threshold values.
+
+`(1..100).&between(23, 29)` to get:
+
+    23 24 25 26 27 28 29
+
+You may also combine the single ended partitions in various combinations to include or exclude the upper and lower threholds as desired.
+
+`(1..20).&after(4).&upto(12)` to get:
+
+    5 6 7 8 9 10 11 12
+
+Note that these examples have all used integers, but they may be **any** Real numeric value. If the threshold value does not appear in the list then the corresponding routines act the same.
 
 BUGS
 ====
 
-Doesn't handle complex numbers. Does some cursory error trapping and coercion but the foot cannon is still loaded.
+Mostly intended for monotonic numeric lists/sequences. May work for non-numeric or non-monotonic but not likely to give useful results.
 
 AUTHOR
 ======
 
-Original Integer cardinal code by TimToady (Larry Wall).
-
-See: http://rosettacode.org/wiki/Number_names#Raku
-
-Other code by thundergnat (Steve Schulze).
+©2022 Stephen Schulze aka thundergnat.
 
 LICENSE
 =======
