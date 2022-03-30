@@ -1,4 +1,4 @@
-unit module Divvy:ver<0.0.1>:auth<github:thundergnat>;
+unit module Divvy:ver<0.0.3>:auth<github:thundergnat>;
 
 multi before (@array, Real $before) is export {
     @array[^(@array.first: :k, * >= $before)]
