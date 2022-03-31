@@ -1,4 +1,4 @@
-unit module Divvy:ver<0.0.3>:auth<github:thundergnat>;
+unit module Divvy:ver<0.0.4>:auth<zef:thundergnat>;
 
 multi before (@array, Real $before) is export {
     @array[^(@array.first: :k, * >= $before)]
@@ -59,10 +59,10 @@ on values.
     my $list = 1..∞ # an infinite range
 
     # show the values in the list before a value greater than or equal to 5
-    put list.&before(5); # 1 2 3 4
+    put $list.&before(5); # 1 2 3 4
 
     # show the values in the list up to and including a value equal to 5
-    put list.&upto(5); # 1 2 3 4 5
+    put $list.&upto(5); # 1 2 3 4 5
 
     # show the first 5 values in the list greater than 5
     put $list.&after(5).head(5); # 6 7 8 9 10
@@ -83,9 +83,10 @@ Convenience routines to "divvy" up a positional object based on the elements val
 
 When presenting a portion of an array or list, it is simple in Raku to return a
 specific number of elements C<@array[^5]> or some such. Often you need to find
-the elements whose B<value> is in some range. "Show the elements less than 100"
-or "find the elements between 25 and 50". There are no built-in routines in Raku
-for that. It is possible to do but often a little convoluted.
+the elements whose B<value> is in some range. "Show the elements with values
+less than 100" or "find the elements with values between 25 and 50". There are
+no built-in routines in Raku for that. It is possible to do but often a little
+convoluted.
 
 This module exposes several routines to easily partition positionals. These
 routines are perfectly capable of working with infinite lists and will B<not>
@@ -126,7 +127,10 @@ some threshold B<not> including the threshold value.
 
 Returns the list of values C<before()> the given defined value or Whatevercode.
 
-=head3 before( Real $value );  or  before( Callable $block );
+=head3 before( Cool @array, Real $value );  or  before( Callable $block );
+
+=item1 @array
+=item2 Positional object; any array, list or list-like object
 
 =item1 $value
 =item2 value; any Real number (Rat, Int, or Num)
@@ -152,7 +156,10 @@ C<(1..100).&before(* %% 7)> returns:
 Complement to C<before()>, C<after()> returns the elements greater than the
 passed in value  or code block.
 
-=head3 after( Real $value );  or  after( Callable $block );
+=head3 after( Cool @array, Real $value );  or  after( Callable $block );
+
+=item1 @array
+=item2 Positional object; any array, list or list-like object
 
 =item1 $value
 =item2 value; any Real number (Rat, Int, or Num)
@@ -180,7 +187,10 @@ some threshold including the threshold value.
 
 Returns the list of values C<upto()> the given defined value or Whatevercode.
 
-=head3 upto( Real $value );  or  upto( Callable $block );
+=head3 upto( Cool @array, Real $value );  or  upto( Callable $block );
+
+=item1 @array
+=item2 Positional object; any array, list or list-like object
 
 =item1 $value
 =item2 value; any Real number (Rat, Int, or Num)
@@ -207,7 +217,10 @@ C<(1..100).&upto(* %% 7)> returns:
 Complement to C<upto()>, C<from()> returns the elements greater than or equal to
 the passed in value  or code block.
 
-=head3 from( Real $value );  or  from( Callable $block );
+=head3 from( Cool @array, Real $value );  or  from( Callable $block );
+
+=item1 @array
+=item2 Positional object; any array, list or list-like object
 
 =item1 $value
 =item2 value; any Real number (Rat, Int, or Num)
@@ -234,7 +247,10 @@ and C<bounded>.
 
 Returns the list of values C<between()> the two boundary values.
 
-=head3 between( Real (or Callable) $lo, Real (or Callable) $hi );
+=head3 between( Cool @array, Real (or Callable) $lo, Real (or Callable) $hi );
+
+=item1 @array
+=item2 Positional object; any array, list or list-like object
 
 =item1 $lo
 =item2 value; lower threshold, any Real number (Rat, Int, or Num) or Callable
@@ -253,7 +269,10 @@ C<(1..100).&between(23, 29)> to get:
 
 Returns the list of values C<bounded()> by the two threshold values.
 
-=head3 bounded( Real (or Callable) $lo, Real (or Callable) $hi );
+=head3 bounded( Cool @array, Real (or Callable) $lo, Real (or Callable) $hi );
+
+=item1 @array
+=item2 Positional object; any array, list or list-like object
 
 =item1 $lo
 =item2 value; lower threshold, any Real number (Rat, Int, or Num) or Callable
@@ -281,10 +300,27 @@ numeric value. If the threshold value does not appear in the list then the
 corresponding routines act the same.
 
 
-Cuban primes between 1e5 and 1.2e5.
+Show cuban primes between 1e5 and 1.2e5:
 
     put (1..*).map({ ($_+1)³ - .³ }).grep( &is-prime ).&between(1e5, 1.2e5);
     # 103231 104347 110017 112327 114661 115837
+
+
+Non-Int boundaries:
+
+    put (0, *+.01 * rand … *).&between(3.575, 3.6045);
+    # 3.5875642424525935 3.5922439090572023 3.6003421569736993 3.6024701972903563
+
+
+
+The callable block may be a Whatevercode or may be an actual block.
+
+Here we find powers of 3, filtering to show the first with 5 digits, through the
+first with more  than 7 digits:
+
+    put (1, 3, 9, 27 … *).&bounded( *.chars == 5, {.chars > 7} );
+    # 19683 59049 177147 531441 1594323 4782969 14348907
+
 
 
 =head1 BUGS

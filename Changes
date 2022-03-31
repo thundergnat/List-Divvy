@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+0.0.4  2022-03-31T15:40:52-04:00
+    - Expand documentation a bit more. More examples and details.
+
 0.0.3  2022-03-30T19:06:19-04:00
     - Yet more typo and documentation fixes
 
