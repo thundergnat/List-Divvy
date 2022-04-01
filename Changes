@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+0.0.5  2022-04-01T11:33:11-04:00
+    - Point META file to the correct repository.
+    - Final polish of documentation. Check all example code is correct. Intensive scan for typos.
+
 0.0.4  2022-03-31T15:40:52-04:00
     - Expand documentation a bit more. More examples and details.
 
