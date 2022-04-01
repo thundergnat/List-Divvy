@@ -43,7 +43,7 @@ This module exposes several routines to easily partition positionals. These rout
 
 These routines primarily are geared to monotonically increasing numeric values. They can be used with decreasing or variable lists but may not return the results expected.
 
-They will all accept both Real defined numeric values for thresholds, or, Callable blocks or Whatever codes.
+They will all accept both Real defined numeric values for thresholds, or, Callable blocks or WhateverCodes.
 
 Exports the Subs:
 
@@ -64,7 +64,7 @@ Use `before()` and `after()` to partition out value less than or greater than so
 <a name="before"></a>before( )
 ------------------------------
 
-Returns the list of values `before()` the given defined value or Whatevercode.
+Returns the list of values `before()` the given defined value or WhateverCode.
 
 ### before( Cool @array, Real $value ); or before( Cool @array, Callable $block );
 
@@ -78,14 +78,14 @@ Returns the list of values `before()` the given defined value or Whatevercode.
 
   * $block
 
-    * callable; an expression, block or Whatevercode that returns a Boolean
+    * callable; an expression, block or WhateverCode that returns a Truthy/Falsey value
 
 Pass in a defined Real value to get all of the elements up to but not including that value.
 
     put (1..100).&before(10);
     1 2 3 4 5 6 7 8 9
 
-Or a Whatevercode
+Or a WhateverCode
 
     put (1..100).&before(* %% 7);
     1 2 3 4 5 6
@@ -107,14 +107,14 @@ Complement to `before()`, `after()` returns the elements greater than the passed
 
   * $block
 
-    * callable; an expression, block or Whatevercode that returns a Boolean
+    * callable; an expression, block or WhateverCode that returns a Truthy/Falsey value
 
 Pass in a defined Real value to get all of the elements after but not including that value.
 
     put (1..10).&after(5);
     6 7 8 9 10
 
-Or a Whatevercode
+Or a WhateverCode
 
     put (1..10).&after(* %% 7);
     8 9 10
@@ -124,7 +124,7 @@ Use `upto()` and `from()` to partition out value less than or greater than some 
 <a name="upto"></a>upto( )
 --------------------------
 
-Returns the list of values `upto()` the given defined value or Whatevercode.
+Returns the list of values `upto()` the given defined value or WhateverCode.
 
 ### upto( Cool @array, Real $value ); or upto( Cool @array, Callable $block );
 
@@ -138,14 +138,14 @@ Returns the list of values `upto()` the given defined value or Whatevercode.
 
   * $block
 
-    * callable; an expression, block or Whatevercode that returns a Boolean
+    * callable; an expression, block or WhateverCode that returns a Truthy/Falsey value
 
 Pass in a defined Real value to get all of the elements up to and including that value.
 
     put (1..100).&upto(10);
     1 2 3 4 5 6 7 8 9 10
 
-Or a Whatevercode
+Or a WhateverCode
 
     put (1..100).&upto(* %% 7);
     1 2 3 4 5 6 7
@@ -167,14 +167,14 @@ Complement to `upto()`, `from()` returns the elements greater than or equal to t
 
   * $block
 
-    * callable; an expression, block or Whatevercode that returns a Boolean
+    * callable; an expression, block or WhateverCode that returns a Truthy/Falsey value
 
 Pass in a defined Real value to get all of the elements greater than or equal to that value.
 
     put (1..10).&from(5);
     5 6 7 8 9 10
 
-Or a Whatevercode
+Or a WhateverCode
 
     put (1..10).from(* %% 7);
     7 8 9 10
@@ -246,7 +246,7 @@ Random interval sequence with non-Int boundaries:
     put (0, *+.01 * rand … *).&between(3.575, 3.6045);
     3.5875642424525935 3.5922439090572023 3.6003421569736993 3.6024701972903563
 
-The callable block may be a Whatevercode or may be an actual block.
+The callable block may be a WhateverCode or may be an actual block.
 
 Powers of 3, filtered to show the first with 5 digits, through the first with more than 7 digits:
 
